@@ -1,0 +1,12 @@
+# Ignore target folders
+target/
+build/
+
+#IDE files
+.idea/
+.vscode/
+*.iml
+
+#Maven wrapper
+!.mvn/wrapper/maven-wrapper.properties
+
