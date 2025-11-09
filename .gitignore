@@ -8,5 +8,10 @@ build/
 *.iml
 
 #Maven wrapper
-!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/maven-wrapper.jar
 
+# Remove unnecessary wrapper/helper files
+HELP.md
+mvnw
+mvnw.cmd
+.gitattributes
