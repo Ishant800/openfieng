@@ -5,6 +5,7 @@ import com.example.user_service.dto.UserDto;
 import com.example.user_service.model.Order;
 import com.example.user_service.model.User;
 import com.example.user_service.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,19 @@ public class Usercontroller {
                 .map(o-> new OrderDto(o.getOrderId(),o.getProduct(),o.getQuantity()))
                 .collect(Collectors.toList());
         return new UserDto(user.getId(), user.getUsername(), user.getEmail(), orders);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> get(@PathVariable Long id){
+        User user = userService.findById(id).orElseThrow(()-> new RuntimeException("user not found"));
+
+        return ResponseEntity.ok(user);
+
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateorder(@PathVariable Long id,@RequestBody Order dto){
+        return ResponseEntity.ok(userService.updateOrderFromUser(id,dto));
     }
 
     @PostMapping

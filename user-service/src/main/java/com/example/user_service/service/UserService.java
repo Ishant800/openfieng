@@ -6,8 +6,6 @@ import com.example.user_service.model.Order;
 import com.example.user_service.model.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +19,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
     }
-
 
     //create users + orders in one transactions
     @Transactional
@@ -40,10 +37,16 @@ public class UserService {
     public void removeOrderFromUser(Long userId,Long orderId){
         User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found"));
         user.getOrders().removeIf(o->o.getOrderId().equals(orderId));
-
         //orphanRemove deletes the order row on commit
     }
 
+    @Transactional
+    public String  updateOrderFromUser(Long userId,Order order){
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found"));
+        user.addOrder(order);
+        return "add successfully";
+
+    }
 
     @Transactional(readOnly = true)
     public List<User> fetchUsersFetchJoin(){
