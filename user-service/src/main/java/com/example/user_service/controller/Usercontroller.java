@@ -8,6 +8,7 @@ import com.example.user_service.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,13 +57,25 @@ public class Usercontroller {
 
 
     @GetMapping("/profile")
-    public String profile(HttpSession session) {
-        String username = (String) session.getAttribute("name");
+    public String profile(Authentication authentication) {
+//        System.out.println("Session ID: " + session.getId());
+//        System.out.println("Username: " + session.getAttribute("username"));
+//        String username = (String) session.getAttribute("username");
+//
+//        if (username == null) return "Not logged in";
+//        return "Hello " + username;
 
-        if (username == null) return "Not logged in";
-
-        return "Hello " + username;
+        return "Hello, " + authentication.getName();
     }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session != null){session.invalidate();}
+        return "Logged out";
+
+    }
+
 
     @PostMapping
     public UserDto createUser(@RequestBody UserDto payload){
@@ -77,6 +90,7 @@ public class Usercontroller {
         User saved = userService.createUsersWithOrders(user,orders);
         return toDto(saved);
     }
+
 
     private UserDto toDto(User user){
        var orders = user.getOrders().stream()
