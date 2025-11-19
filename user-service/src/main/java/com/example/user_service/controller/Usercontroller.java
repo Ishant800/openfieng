@@ -5,6 +5,8 @@ import com.example.user_service.dto.UserDto;
 import com.example.user_service.model.Order;
 import com.example.user_service.model.User;
 import com.example.user_service.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +15,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("")
 public class Usercontroller {
     private final UserService userService;
 
@@ -44,6 +46,22 @@ public class Usercontroller {
     @PostMapping("/{id}")
     public ResponseEntity<?> updateorder(@PathVariable Long id,@RequestBody Order dto){
         return ResponseEntity.ok(userService.updateOrderFromUser(id,dto));
+    }
+
+
+    @PostMapping("/login")
+    public String login(@RequestBody UserDto userDto, HttpServletRequest request){
+        return userService.login(userDto,request);
+    }
+
+
+    @GetMapping("/profile")
+    public String profile(HttpSession session) {
+        String username = (String) session.getAttribute("name");
+
+        if (username == null) return "Not logged in";
+
+        return "Hello " + username;
     }
 
     @PostMapping
