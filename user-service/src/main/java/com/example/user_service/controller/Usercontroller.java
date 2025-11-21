@@ -16,7 +16,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/user")
 public class Usercontroller {
     private final UserService userService;
 
@@ -56,17 +56,17 @@ public class Usercontroller {
     }
 
 
-    @GetMapping("/profile")
-    public String profile(Authentication authentication) {
-//        System.out.println("Session ID: " + session.getId());
-//        System.out.println("Username: " + session.getAttribute("username"));
-//        String username = (String) session.getAttribute("username");
+//    @GetMapping("/profile")
+//    public String profile(Authentication authentication) {
+////        System.out.println("Session ID: " + session.getId());
+////        System.out.println("Username: " + session.getAttribute("username"));
+////        String username = (String) session.getAttribute("username");
+////
+////        if (username == null) return "Not logged in";
+////        return "Hello " + username;
 //
-//        if (username == null) return "Not logged in";
-//        return "Hello " + username;
-
-        return "Hello, " + authentication.getName();
-    }
+//        return "Hello, " + authentication.getName();
+//    }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request){
@@ -97,6 +97,14 @@ public class Usercontroller {
                .map(o-> new OrderDto(o.getOrderId(), o.getProduct(),o.getQuantity()))
                .collect(Collectors.toList());
        return new UserDto(user.getId(), user.getUsername(), user.getEmail(),orders);
+    }
+
+
+    //security testing api
+
+    @GetMapping("/profile")
+    public String profile(){
+        return "User profile data";
     }
 
 
