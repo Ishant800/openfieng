@@ -22,6 +22,8 @@ public class User {
     private Long id;
     private String username;
     private String email;
+    private String password;
+    private String role;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();

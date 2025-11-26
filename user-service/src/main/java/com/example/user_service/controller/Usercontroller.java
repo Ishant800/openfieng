@@ -1,5 +1,8 @@
 package com.example.user_service.controller;
 
+import com.example.user_service.JWT.JwtService;
+import com.example.user_service.Repository.UserRepository;
+import com.example.user_service.dto.JwtTokenClaimsDto;
 import com.example.user_service.dto.OrderDto;
 import com.example.user_service.dto.UserDto;
 import com.example.user_service.model.Order;
@@ -7,20 +10,34 @@ import com.example.user_service.model.User;
 import com.example.user_service.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class Usercontroller {
     private final UserService userService;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public Usercontroller(UserService userService){this.userService = userService;}
+    private final UserRepository repo;
+
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    public Usercontroller(UserService userService, JwtService jwtService, UserRepository userRepository, UserRepository repo){
+        this.userService = userService;
+        this.jwtService = jwtService;
+        this.userRepository = userRepository;
+        this.repo = repo;
+
+
+    }
 
     @GetMapping
     public List<UserDto> getAllUsers(){
@@ -49,24 +66,6 @@ public class Usercontroller {
         return ResponseEntity.ok(userService.updateOrderFromUser(id,dto));
     }
 
-
-    @PostMapping("/login")
-    public String login(@RequestBody UserDto userDto, HttpServletRequest request){
-        return userService.login(userDto,request);
-    }
-
-
-//    @GetMapping("/profile")
-//    public String profile(Authentication authentication) {
-////        System.out.println("Session ID: " + session.getId());
-////        System.out.println("Username: " + session.getAttribute("username"));
-////        String username = (String) session.getAttribute("username");
-////
-////        if (username == null) return "Not logged in";
-////        return "Hello " + username;
-//
-//        return "Hello, " + authentication.getName();
-//    }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request){
@@ -106,6 +105,33 @@ public class Usercontroller {
     public String profile(){
         return "User profile data";
     }
+
+
+    @PostMapping("/register")
+    public String register(@RequestBody User user){
+        user.setPassword(encoder.encode(user.getPassword()));
+        repo.save(user);
+        return "user registered sucessfully";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody User user){
+
+        User users = userRepository.findByEmail(user.getEmail()).orElseThrow(()-> new RuntimeException("Invalid email!"));
+        if(!encoder.matches(user.getPassword(),users.getPassword())){
+            throw new RuntimeException("invalid password");
+        }
+
+        JwtTokenClaimsDto dto = new JwtTokenClaimsDto();
+        dto.setUserid(users.getId());
+        dto.setUsername(users.getUsername());
+        dto.setEmail(users.getEmail());
+        dto.setRole(users.getRole());
+
+        return jwtService.generateToken(dto);
+    }
+
+
 
 
 }

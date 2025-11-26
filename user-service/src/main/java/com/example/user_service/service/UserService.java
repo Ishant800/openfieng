@@ -2,16 +2,8 @@ package com.example.user_service.service;
 
 import com.example.user_service.Repository.OrderRepository;
 import com.example.user_service.Repository.UserRepository;
-import com.example.user_service.dto.UserDto;
 import com.example.user_service.model.Order;
 import com.example.user_service.model.User;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -29,29 +21,29 @@ public class UserService {
     }
 
 
-    public String login(UserDto userDto, HttpServletRequest request){
-        if(userDto.name().equals("user") && userDto.email().equals("user@gmail.com")){
+//    public String login(UserDto userDto, HttpServletRequest request){
+//        if(userDto.name().equals("user") && userDto.email().equals("user@gmail.com")){
+////            HttpSession session = request.getSession(true);
+////            session.setAttribute("username",userDto.name());
+////            return "login sucessfully";
+//
+//            Authentication authentication = new UsernamePasswordAuthenticationToken(
+//                    userDto.name(),
+//                    null,
+//                    List.of(new SimpleGrantedAuthority("ROLE_USER"))
+//            );
+//
+//            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+//            securityContext.setAuthentication(authentication);
+//
 //            HttpSession session = request.getSession(true);
-//            session.setAttribute("username",userDto.name());
-//            return "login sucessfully";
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDto.name(),
-                    null,
-                    List.of(new SimpleGrantedAuthority("ROLE_USER"))
-            );
-
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            securityContext.setAuthentication(authentication);
-
-            HttpSession session = request.getSession(true);
-            session.setAttribute("SPRING_SECURITY_CONTEXT",securityContext);
-            return "Login sucessfully";
-
-        }
-        return "Invalid credentials";
-
-    }
+//            session.setAttribute("SPRING_SECURITY_CONTEXT",securityContext);
+//            return "Login sucessfully";
+//
+//        }
+//        return "Invalid credentials";
+//
+//    }
 
     //create users + orders in one transactions
     @Transactional
